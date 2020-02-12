@@ -25,7 +25,9 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - server
+            {{- if .Values.disableTransportWrapping }}
             - --disable-transport-wrapping
+            {{- end }}
             - --print-token
             - --port={{ .Values.service.port}}
           ports:

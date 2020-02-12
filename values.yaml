@@ -1,6 +1,9 @@
 token: inlets
+disableTransportWrapping: false
+
 replicaCount: 1
 generateHost: false
+
 serviceAccount:
   create: false
   name:
