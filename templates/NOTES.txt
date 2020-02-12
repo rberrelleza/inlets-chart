@@ -1,0 +1,23 @@
+{{- $token := .Values.token  -}}
+Your tunnel will be ready in a few seconds. To connect to it, first start your local server and then run:
+{{- if .Values.ingress.enabled }}
+  export HOST_NAME=$(kubectl get ing --namespace {{ .Release.Namespace }} {{ include "inlets.fullname" . }} -o jsonpath="{.spec.rules[0].host}")
+  echo inlets client --upstream=http://127.0.0.1:5000 --remote $HOST_NAME --token={{ $token }}
+
+{{- else if contains "LoadBalancer" .Values.service.type }}
+     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+           You can watch the status of by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "inlets.fullname" . }}'
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "inlets.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+  echo inlets client --upstream=http://127.0.0.1:5000 --remote $SERVICE_IP:{{ .Values.service.port }} --token={{ $token }}
+inlets client --remote $SERVICE_IP:{{ .Values.service.port }} --token={{ $token }}
+
+{{- else if contains "ClusterIP" .Values.service.type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "inlets.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:80
+  inlets client --upstream=http://127.0.0.1:5000 --remote localhost:8080 --token={{ $token }}
+
+{{- else if contains "NodePort" .Values.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "inlets.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo inlets client --upstream=http://127.0.0.1:5000 --remote $NODE_IP:$NODE_PORT --token={{ $token }}
+{{- end }}

@@ -1,0 +1,25 @@
+token: inlets
+replicaCount: 1
+generateHost: false
+serviceAccount:
+  create: false
+  name:
+
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: true
+  annotations: {}
+  hosts:
+    - inlets.local
+  tls: []
+  
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
