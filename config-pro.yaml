@@ -1,0 +1,8 @@
+token: okteto
+pro:
+  enabled: true
+  remoteTcp: 127.0.0.1
+ingress:
+  enabled: true
+  annotations:
+    dev.okteto.com/generate-host: "true"

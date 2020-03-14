@@ -21,15 +21,11 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: inlets/inlets:{{ .Chart.AppVersion}}
+          
           imagePullPolicy: IfNotPresent
+          image: {{ include "inlets.image" . }}
           args:
-            - server
-            {{- if .Values.disableTransportWrapping }}
-            - --disable-transport-wrapping
-            {{- end }}
-            - --print-token
-            - --port={{ .Values.service.port}}
+            {{- include "inlets.args" . | nindent 12 }}
           ports:
             - name: tunnel
               containerPort: {{ .Values.service.port}}

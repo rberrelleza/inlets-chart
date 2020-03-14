@@ -61,3 +61,28 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Get the inlets image
+*/}}
+{{- define "inlets.image" -}}
+{{- if .Values.pro.enabled -}}
+{{- printf "%s:%s" .Values.pro.image .Values.pro.tag -}}
+{{- else -}}
+{{- printf "%s:%s" .Values.community.image .Values.community.tag -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Get the inlets args
+*/}}
+{{- define "inlets.args" -}}
+{{- if .Values.pro.enabled -}}
+- server
+- --remote-tcp={{ .Values.pro.remoteTcp }}
+- --auto-tls=false
+{{- else -}}
+- server
+- --print-token
+{{- end -}}
+{{- end -}}

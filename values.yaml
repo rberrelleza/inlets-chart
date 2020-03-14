@@ -1,8 +1,16 @@
 token: inlets
 disableTransportWrapping: false
-
 replicaCount: 1
-generateHost: false
+
+community:
+  image: inlets/inlets
+  tag: 2.7.0
+
+pro:
+  enabled: false
+  image: inlets/inlets-pro
+  tag: 0.5.6
+  remoteTcp: 192.168.100.1
 
 serviceAccount:
   create: false
@@ -13,7 +21,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 8000
+  port: 8123
 
 ingress:
   enabled: true
@@ -22,7 +30,13 @@ ingress:
     - inlets.local
   tls: []
   
-resources: {}
+resources:
+  requests:
+    cpu: 5m
+    memory: 16Mi
+  limits:
+    cpu: 50m
+    memory: 64Mi
 nodeSelector: {}
 tolerations: []
 affinity: {}
